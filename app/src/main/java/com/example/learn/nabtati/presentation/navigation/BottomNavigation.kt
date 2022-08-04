@@ -1,5 +1,6 @@
 package com.example.learn.nabtati.presentation.navigation
 
+import android.content.Context
 import androidx.compose.foundation.layout.Column
 import androidx.compose.material.BottomNavigation
 import androidx.compose.material.BottomNavigationItem
@@ -27,7 +28,8 @@ import com.example.learn.nabtati.presentation.ui.theme.DarkGreen
 @Composable
 fun Navigation(
     navController: NavHostController,
-    bottomBarState: MutableState<Boolean>
+    bottomBarState: MutableState<Boolean>,
+    context: Context
 ) {
     NavHost(navController = navController, startDestination = "home"){
         composable(route = "home"){
@@ -36,7 +38,8 @@ fun Navigation(
             NavHost(navController = homeNavController, startDestination = "home"){
                 composable(route = "home"){
                     Home(
-                        homeNavController
+                        homeNavController,
+                        context = context
                     )
                 }
                 composable(route = "plant_details"){

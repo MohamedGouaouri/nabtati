@@ -20,6 +20,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.learn.nabtati.presentation.navigation.BottomNavItem
 import com.example.learn.nabtati.presentation.navigation.BottomNavigationBar
 import com.example.learn.nabtati.presentation.navigation.Navigation
+import com.example.learn.nabtati.services.notifications.NabtatiNotificationService
 import com.example.learn.nabtati.sockets.SocketHandler
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -29,6 +30,8 @@ class MainActivity : ComponentActivity() {
     @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+
         setContent {
             finishActivity(0)
             val navController = rememberNavController()
@@ -74,7 +77,8 @@ class MainActivity : ComponentActivity() {
             ){
                 Navigation(
                     navController = navController,
-                    bottomBarState = bottomBarState
+                    bottomBarState = bottomBarState,
+                    context = applicationContext
                 )
             }
         }

@@ -13,18 +13,20 @@ import javax.inject.Inject
 class GetPlantsUseCase @Inject constructor(
  private val repository: PlantRepository
 ){
+
+
     operator fun invoke(): Flow<Resource<List<Plant>>> = flow{
         Log.d("PLANTS INVOKE", "Getting data")
         try {
-            emit(Resource.Loading())
+            emit(Resource.Loading<List<Plant>>())
             val plants = repository.getPlants()?.map {
                 it.toPlant()
             }
-            emit(Resource.Success(plants))
+            emit(Resource.Success<List<Plant>>(plants))
         }catch (e: HttpException){
-            emit(Resource.Error(e.localizedMessage ?: "An unexpected error occurred"))
+            emit(Resource.Error<List<Plant>>(e.localizedMessage ?: "An unexpected error occurred"))
         }catch (e: IOException){
-            emit(Resource.Error("Couldn't reach server. Check your internet connection."))
+            emit(Resource.Error<List<Plant>>("Couldn't reach server. Check your internet connection."))
         }
     }
 }

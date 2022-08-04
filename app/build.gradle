@@ -93,4 +93,8 @@ dependencies {
 
     // Swipe 2 dismiss
     implementation "androidx.compose.material:material:$compose_ui_version"
+
+
+
+    implementation 'com.google.code.gson:gson:2.8.6'
 }

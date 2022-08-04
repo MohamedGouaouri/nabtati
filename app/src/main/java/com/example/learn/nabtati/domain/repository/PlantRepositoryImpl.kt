@@ -9,7 +9,7 @@ class PlantRepositoryImpl @Inject constructor(
     private val api: NabtatiApi
 ): PlantRepository {
     override suspend fun getPlants(): List<PlantDto> {
-        return api.getPlants()
+        return api.getPlantsWS()
     }
 
 //    override suspend fun getPlantDetails(coinId: String): PlantDetailsDto {
