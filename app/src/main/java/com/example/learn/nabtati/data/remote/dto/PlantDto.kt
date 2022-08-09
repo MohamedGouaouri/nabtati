@@ -11,7 +11,7 @@ class PlantDto (
     private val image: String
 ){
     fun toPlant(): Plant {
-        return Plant(name, family, price, image)
+        return Plant(name = name, family = family, price = price, image = image)
     }
 
 

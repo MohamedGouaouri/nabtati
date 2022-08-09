@@ -2,6 +2,7 @@ package com.example.learn.nabtati.presentation.components.home
 
 import android.content.Context
 import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -28,6 +29,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.learn.R
+import com.example.learn.nabtati.domain.model.Plant
 import com.example.learn.nabtati.presentation.components.home.viewmodels.PlantsListViewModel
 import com.example.learn.nabtati.presentation.ui.theme.GreenWhite
 import com.example.learn.nabtati.presentation.ui.theme.LightGrey
@@ -167,24 +169,12 @@ fun Home(
 
             // List of plants
             LazyColumn{
-//                item {
-//                    PlantCard(
-//                        imageResource = painterResource(id = R.drawable.plant1),
-//                        name = "Monsetra Adansonii",
-//                        family = "Monstera family, connected = ${SocketHandler.getSocket().connected()}",
-//                        price = 19.00,
-//                        onClick = {
-//                            navController.navigate("plant_details")
-//                        }
-//                    )
-//                }
-
-                items(state.plants){ plant ->
+                item {
+                    val plant = Plant(name = "Monsetra Adansonii", family = "Monstera family", price = 20.00, image = "")
                     PlantCard(
                         imageResource = painterResource(id = R.drawable.plant1),
-                        name = plant.name,
-                        family = plant.family,
-                        price = plant.price,
+                        plant = plant,
+                        viewModel = viewModel,
                         onClick = {
                             navController.navigate("plant_details")
                         }
@@ -192,23 +182,24 @@ fun Home(
                 }
 
 
+
             }
-            Box{
-                if(state.error.isNotBlank()) {
-                    Text(
-                        text = state.error,
-                        color = MaterialTheme.colors.error,
-                        textAlign = TextAlign.Center,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 20.dp)
-                            .align(Alignment.Center)
-                    )
-                }
-                if(state.isLoading) {
-                    CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
-                }
-            }
+//            Box{
+//                if(state.error.isNotBlank()) {
+//                    Text(
+//                        text = state.error,
+//                        color = MaterialTheme.colors.error,
+//                        textAlign = TextAlign.Center,
+//                        modifier = Modifier
+//                            .fillMaxWidth()
+//                            .padding(horizontal = 20.dp)
+//                            .align(Alignment.Center)
+//                    )
+//                }
+//                if(state.isLoading) {
+//                    CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
+//                }
+//            }
         }
     }
 }

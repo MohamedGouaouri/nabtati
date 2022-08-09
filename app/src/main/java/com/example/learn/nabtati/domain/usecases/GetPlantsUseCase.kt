@@ -2,7 +2,7 @@ package com.example.learn.nabtati.domain.usecases
 
 import android.util.Log
 import com.example.learn.nabtati.common.Resource
-import com.example.learn.nabtati.data.repository.PlantRepository
+import com.example.learn.nabtati.domain.repository.PlantRepository
 import com.example.learn.nabtati.domain.model.Plant
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow

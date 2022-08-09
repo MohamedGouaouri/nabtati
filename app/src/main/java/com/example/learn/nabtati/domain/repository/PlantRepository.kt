@@ -1,4 +1,4 @@
-package com.example.learn.nabtati.data.repository
+package com.example.learn.nabtati.domain.repository
 
 import com.example.learn.nabtati.data.remote.dto.PlantDto
 

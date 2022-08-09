@@ -1,6 +1,7 @@
-package com.example.learn.nabtati.data.remote.dto
+package com.example.learn.nabtati.data.remote.apis
 
 import android.util.Log
+import com.example.learn.nabtati.data.remote.dto.PlantDto
 import com.example.learn.nabtati.sockets.SocketHandler
 import retrofit2.http.GET
 
