@@ -1,4 +1,4 @@
-package com.example.learn.nabtati.presentation.components.home
+package com.example.learn.nabtati.presentation.pages.home
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.clickable

@@ -105,4 +105,9 @@ dependencies {
     kapt "androidx.room:room-compiler:$room_version"
     implementation "androidx.room:room-ktx:$room_version"
     testImplementation "androidx.room:room-testing:$room_version"
+
+
+    // swipe refresh
+    implementation "com.google.accompanist:accompanist-swiperefresh:0.24.2-alpha"
+
 }

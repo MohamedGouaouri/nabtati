@@ -1,6 +1,5 @@
-package com.example.learn.nabtati.presentation.components.home
+package com.example.learn.nabtati.presentation.pages.home
 
-import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -20,10 +19,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.ViewModel
 import com.example.learn.R
 import com.example.learn.nabtati.domain.model.Plant
-import com.example.learn.nabtati.presentation.components.home.viewmodels.PlantsListViewModel
 import com.example.learn.nabtati.presentation.ui.theme.DarkGreen
 import com.example.learn.nabtati.presentation.ui.theme.LightGrey
 
@@ -90,26 +87,6 @@ fun PlantCard(
                         color = DarkGreen
                     )
                 }
-
-                Icon(
-                    painter = painterResource(id = R.drawable.heart2),
-                    contentDescription = "",
-                    modifier = Modifier
-                        .padding(5.dp)
-                        .clickable {
-                            savedPlantState = if (savedPlantState) {
-                                viewModel.deletePlant(context, plant)
-                                Toast.makeText(context, "Deleted", Toast.LENGTH_SHORT).show()
-                                false
-
-                            } else{
-                                viewModel.savePlant(context, plant)
-                                Toast.makeText(context, "Saved", Toast.LENGTH_SHORT).show()
-                                true
-                            }
-
-                        }
-                )
             }
         }
         Spacer(modifier = Modifier.height(10.dp))

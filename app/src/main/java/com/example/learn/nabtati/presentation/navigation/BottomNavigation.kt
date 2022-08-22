@@ -15,14 +15,16 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.example.learn.nabtati.presentation.components.home.Home
-import com.example.learn.nabtati.presentation.components.home.PlantDetails
+import com.example.learn.nabtati.presentation.pages.home.Home
+import com.example.learn.nabtati.presentation.pages.home.PlantDetails
+import com.example.learn.nabtati.presentation.pages.home.PlantsListViewModel
 import com.example.learn.nabtati.presentation.ui.theme.DarkGreen
 
 @Composable
@@ -31,15 +33,20 @@ fun Navigation(
     bottomBarState: MutableState<Boolean>,
     context: Context
 ) {
+    val viewModel: PlantsListViewModel = hiltViewModel()
+
     NavHost(navController = navController, startDestination = "home"){
+
         composable(route = "home"){
             val homeNavController = rememberNavController()
+
 
             NavHost(navController = homeNavController, startDestination = "home"){
                 composable(route = "home"){
                     Home(
                         homeNavController,
-                        context = context
+                        context = context,
+                        viewModel = viewModel
                     )
                 }
                 composable(route = "plant_details"){

@@ -1,4 +1,4 @@
-package com.example.learn.nabtati.presentation.components.home
+package com.example.learn.nabtati.presentation.pages.home
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -151,7 +151,7 @@ fun PlantDetails(
                         .padding(10.dp),
                     contentAlignment = Alignment.Center
                 ){
-                    Icon(painter = painterResource(id = R.drawable.baseline_chat_24), contentDescription = "")
+                    Icon(painter = painterResource(id = R.drawable.baseline_analytics_24), contentDescription = "")
                 }
 
                 Spacer(Modifier.width(10.dp))

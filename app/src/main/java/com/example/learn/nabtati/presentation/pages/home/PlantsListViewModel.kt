@@ -1,7 +1,6 @@
-package com.example.learn.nabtati.presentation.components.home.viewmodels
+package com.example.learn.nabtati.presentation.pages.home
 
 import android.content.Context
-import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -9,58 +8,79 @@ import com.example.learn.nabtati.common.Resource
 import com.example.learn.nabtati.data.db.roomDB
 import com.example.learn.nabtati.domain.model.Plant
 import com.example.learn.nabtati.domain.usecases.GetPlantsUseCase
-import com.example.learn.nabtati.presentation.components.home.PlantsListState
-import com.example.learn.nabtati.sockets.SocketHandler
+import com.example.learn.nabtati.domain.usecases.GetTipUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
-import org.json.JSONArray
-import java.net.SocketException
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 
 @HiltViewModel
 class PlantsListViewModel @Inject constructor(
-    private val getPlantsUseCase: GetPlantsUseCase
+    private val getPlantsUseCase: GetPlantsUseCase,
+    private val getTipUseCase: GetTipUseCase
 ): ViewModel() {
 
-    private val _state = mutableStateOf(PlantsListState())
-    val state = _state
+    private var _state = mutableStateOf(PlantsListState())
+    var state = _state
 
 
     init {
         getPlants()
+        getTip()
     }
 
     private fun getPlants(){
 
-
         getPlantsUseCase().onEach { result ->
 
-            Log.d("GET PLANTS", "Called Inside")
 
             when (result) {
 
                 is Resource.Success -> {
-                    Log.d("GET PLANTS SUCCESS", "Called getPlants")
-                    _state.value = PlantsListState(plants = result.data ?: emptyList())
+                    _state.value = _state.value.copy(plants = result.data ?: emptyList(), isLoading = false)
                 }
 
                 is Resource.Loading -> {
-                    Log.d("GET PLANTS LOADING", "Called getPlants")
-                    _state.value = PlantsListState(isLoading = true)
+                    _state.value = _state.value.copy(isLoading = true)
                 }
 
                 is Resource.Error -> {
-                    Log.d("GET PLANTS ERROR", "Called getPlants")
-                    _state.value = PlantsListState(error = result.message ?: "An unexpected error occurred")
+                    _state.value = _state.value.copy(error = result.message ?: "An unexpected error occurred")
                 }
 
             }
         }.launchIn(viewModelScope)
     }
 
+
+    private fun getTip(){
+        getTipUseCase.exec().onEach { result ->
+            when(result){
+                is Resource.Success -> {
+                    _state.value = _state.value.copy(tip = result.data, isLoading = false)
+                }
+                else -> Unit
+            }
+        }.launchIn(viewModelScope)
+    }
+
+
+
+
+    fun onEvent(event: PlantsListEvents) {
+        when(event) {
+            is PlantsListEvents.Refresh -> {
+                getPlants()
+            }
+            is PlantsListEvents.SwipeTipCard -> {
+                _state.value = _state.value.copy(displayTip = false)
+            }
+        }
+    }
 
 
 

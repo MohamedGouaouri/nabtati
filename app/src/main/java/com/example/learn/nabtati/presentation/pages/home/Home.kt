@@ -1,8 +1,7 @@
-package com.example.learn.nabtati.presentation.components.home
+package com.example.learn.nabtati.presentation.pages.home
 
 import android.content.Context
 import android.util.Log
-import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -29,13 +28,14 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.learn.R
-import com.example.learn.nabtati.domain.model.Plant
-import com.example.learn.nabtati.presentation.components.home.viewmodels.PlantsListViewModel
 import com.example.learn.nabtati.presentation.ui.theme.GreenWhite
+import com.example.learn.nabtati.presentation.ui.theme.LightGreen4
 import com.example.learn.nabtati.presentation.ui.theme.LightGrey
 import com.example.learn.nabtati.presentation.ui.theme.OrangeYellow4
 import com.example.learn.nabtati.services.notifications.NabtatiNotificationService
 import com.example.learn.nabtati.sockets.SocketHandler
+import com.google.accompanist.swiperefresh.SwipeRefresh
+import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -44,7 +44,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun Home(
     navController: NavController,
-    viewModel: PlantsListViewModel = hiltViewModel(),
+    viewModel: PlantsListViewModel,
     context: Context
 ) {
 
@@ -54,11 +54,13 @@ fun Home(
         mutableStateOf(false)
     }
 
-    val state = viewModel.state.value
+    val state by viewModel.state
 
     var notificationCount by remember {
         mutableStateOf(1)
     }
+
+    var swipeRefreshState = rememberSwipeRefreshState(isRefreshing = state.isRefreshing)
 
     try {
         SocketHandler.establishConnection()
@@ -93,16 +95,6 @@ fun Home(
                     modifier = Modifier.padding(10.dp)
 
                 ) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.heart),
-                        contentDescription = "",
-                        modifier = Modifier
-                            .padding(5.dp)
-                            .clickable {
-                                // Show Dialog of rating
-                                notificationService.showNotification("hello world")
-                            }
-                    )
                     if (notificationCount > 0){
                         BadgedBox(
                             badge =  {
@@ -128,10 +120,10 @@ fun Home(
                             Icon(
                                 imageVector = Icons.Default.Notifications,
                                 contentDescription = "",
-                                modifier = Modifier.padding(5.dp)
+                                modifier = Modifier
+                                    .padding(5.dp)
                                     .clickable {
 //                                        notificationService.showNotification("Heey new plant is here")
-
                                     }
                             )
                         }
@@ -146,19 +138,20 @@ fun Home(
             }
             Spacer(modifier = Modifier.height(20.dp))
 
-            if (!tipCardDismissed){
-                // Today's tip card
-                TipCard(
-                    tip = "Give enough water to maximize plant growth",
-                    imageResource = painterResource(id = R.drawable.leaf),
-                    dismiss = {
-                        tipCardDismissed = true
-                    }
-                )
-            }
+           if (state.displayTip){
+               if (!tipCardDismissed && state.tip != null){
+                   // Today's tip card
+                   TipCard(
+                       tip = state.tip!!.tip,
+                       imageResource = painterResource(id = R.drawable.leaf),
+                       dismiss = {
+                           tipCardDismissed = true
+                           viewModel.onEvent(PlantsListEvents.SwipeTipCard)
+                       }
+                   )
+               }
 
-            // TODO: Row of filters
-//            Spacer(modifier = Modifier.height(20.dp))
+           }
 
             Chips(
                 items = mutableListOf("All", "Popular", "New Arrivals", "Best Seller")
@@ -167,39 +160,56 @@ fun Home(
             Spacer(modifier = Modifier.height(20.dp))
 
 
-            // List of plants
-            LazyColumn{
-                item {
-                    val plant = Plant(name = "Monsetra Adansonii", family = "Monstera family", price = 20.00, image = "")
-                    PlantCard(
-                        imageResource = painterResource(id = R.drawable.plant1),
-                        plant = plant,
-                        viewModel = viewModel,
-                        onClick = {
-                            navController.navigate("plant_details")
+            // Swipe refresh
+            
+            SwipeRefresh(state = swipeRefreshState, onRefresh = {
+                viewModel.onEvent(PlantsListEvents.Refresh)
+            }) {
+
+                // List of plants
+                if (state.error.isBlank()){
+                    LazyColumn{
+                        items(state.plants){plant ->
+                            PlantCard(
+                                imageResource = painterResource(id = R.drawable.plant1),
+                                plant = plant,
+                                viewModel = viewModel,
+                                onClick = {
+                                    navController.navigate("plant_details")
+                                }
+                            )
                         }
-                    )
+
+                    }
                 }
 
-
-
+                // Error and loading state area
+                Box(
+                    contentAlignment = Alignment.Center,
+                    modifier = Modifier.fillMaxSize()
+                ){
+                    if(state.error.isNotBlank()) {
+                        Text(
+                            text = state.error,
+                            color = MaterialTheme.colors.error,
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 20.dp)
+                                .align(Alignment.Center)
+                        )
+                    }
+                    if(state.isLoading) {
+                        CircularProgressIndicator(
+                            modifier = Modifier
+                                .align(Alignment.Center),
+                            color = LightGreen4
+                        )
+                    }
+                }
+                
             }
-//            Box{
-//                if(state.error.isNotBlank()) {
-//                    Text(
-//                        text = state.error,
-//                        color = MaterialTheme.colors.error,
-//                        textAlign = TextAlign.Center,
-//                        modifier = Modifier
-//                            .fillMaxWidth()
-//                            .padding(horizontal = 20.dp)
-//                            .align(Alignment.Center)
-//                    )
-//                }
-//                if(state.isLoading) {
-//                    CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
-//                }
-//            }
+
         }
     }
 }
@@ -225,7 +235,8 @@ fun SearchTopAppBar(
             Icon(
                 painter = painterResource(id = R.drawable.baseline_search_24),
                 contentDescription = "",
-                modifier = Modifier.padding(10.dp)
+                modifier = Modifier
+                    .padding(16.dp)
             )
             BasicTextField(
                 value = value,
@@ -268,7 +279,6 @@ fun TipCard(
         ) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween,
                 modifier = Modifier.fillMaxSize()
             ) {
                 Box(
@@ -295,7 +305,7 @@ fun TipCard(
                         fontSize = 20.sp
                     )
                     Text(
-                        text = tip,
+                        text = tip ?: "",
                         color = LightGrey,
                         fontSize = 15.sp
                     )

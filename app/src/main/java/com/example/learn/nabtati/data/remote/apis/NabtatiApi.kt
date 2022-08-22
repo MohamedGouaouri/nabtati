@@ -2,6 +2,8 @@ package com.example.learn.nabtati.data.remote.apis
 
 import android.util.Log
 import com.example.learn.nabtati.data.remote.dto.PlantDto
+import com.example.learn.nabtati.data.remote.dto.TipDto
+import com.example.learn.nabtati.domain.model.Tip
 import com.example.learn.nabtati.sockets.SocketHandler
 import retrofit2.http.GET
 
@@ -25,7 +27,9 @@ interface NabtatiApi {
         return emptyList()
     }
 
-//    @GET("/v1/coins/{coinId}")
-//    suspend fun getCoinDetails(@Path("coinId") coinId: String): PlantDetailsDto
+
+
+    @GET("/tip")
+    suspend fun getTip(): Tip
 
 }
